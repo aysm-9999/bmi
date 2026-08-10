@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BMI & Health Calculator</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        /* HEADER */
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #333;
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #777;
+            font-size: 15px;
+        }
+
+        /* TABS */
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: #f3f3f8;
+            padding: 7px;
+            border-radius: 15px;
+        }
+
+        .tab {
+            flex: 1;
+            border: none;
+            padding: 13px 8px;
+            border-radius: 10px;
+            background: transparent;
+            color: #555;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab:hover {
+            background: #e5e5ee;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        /* SECTIONS */
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .section-title p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* FORM */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #667eea;
+        }
+
+        .hint {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* BUTTON */
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(102, 126, 234, 0.3);
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #eee;
+            color: #444;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background: #ddd;
+        }
+
+        /* RESULT */
+
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: 25px;
+            background: #f6f7ff;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .bmi-number {
+            font-size: 45px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .category {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .underweight {
+            color: #3498db;
+        }
+
+        .normal {
+            color: #27ae60;
+        }
+
+        .overweight {
+            color: #f39c12;
+        }
+
+        .obese {
+            color: #e74c3c;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* BMI SCALE */
+
+        .scale {
+            margin-top: 20px;
+        }
+
+        .scale-bar {
+            height: 13px;
+            border-radius: 10px;
+
+            background: linear-gradient(to right,
+                    #3498db 0%,
+                    #3498db 25%,
+                    #27ae60 25%,
+                    #27ae60 50%,
+                    #f39c12 50%,
+                    #f39c12 75%,
+                    #e74c3c 75%,
+                    #e74c3c 100%);
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #777;
+            margin-top: 6px;
+        }
+
+        /* PREGNANCY */
+
+        .pregnancy-result {
+            text-align: left;
+        }
+
+        .pregnancy-result h3 {
+            text-align: center;
+        }
+
+        .gain-range {
+            font-size: 30px;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin: 12px 0;
+        }
+
+        .pregnancy-card {
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .pregnancy-card strong {
+            color: #444;
+        }
+
+        /* ERROR */
+
+        .error {
+            display: none;
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* FOOTER */
+
+        .disclaimer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 25px 18px;
+                border-radius: 20px;
+            }
+
+            header h1 {
+                font-size: 27px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+            }
+
+            .bmi-number {
+                font-size: 38px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <header>
+            <h1>Health & BMI Calculator</h1>
+            <p>Choose the calculator that matches your needs</p>
+        </header>
+
+
+        <!-- TABS -->
+
+        <div class="tabs">
+
+            <button class="tab active" onclick="showSection('adult', this)">
+                👤 Adults
+            </button>
+
+            <button class="tab" onclick="showSection('child', this)">
+                🧒 Children
+            </button>
+
+            <button class="tab" onclick="showSection('pregnancy', this)">
+                🤰 Pregnancy
+            </button>
+
+        </div>
+
+
+        <!-- ================= ADULT SECTION ================= -->
+
+        <section id="adult" class="section active">
+
+            <div class="section-title">
+                <h2>Adult BMI Calculator</h2>
+                <p>Calculate BMI using your height and weight</p>
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="adultHeight">
+                    Height
+                </label>
+
+                <input type="number" id="adultHeight" placeholder="Enter height in cm" min="1" step="0.1">
+
+                <p class="hint">
+                    Example: 170 cm
+                </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="adultWeight">
+                    Weight
+                </label>
+
+                <input type="number" id="adultWeight" placeholder="Enter weight in kg" min="1" step="0.1">
+
+                <p class="hint">
+                    Example: 65 kg
+                </p>
+
+            </div>
+
+
+            <button class="calculate-btn" onclick="calculateAdultBMI()">
+                Calculate BMI
+            </button>
+
+            <button class="reset-btn" onclick="resetAdult()">
+                Reset
+            </button>
+
+
+            <p class="error" id="adultError">
+                Please enter a valid height and weight.
+            </p>
+
+
+            <div class="result" id="adultResult">
+
+                <h3>Your BMI</h3>
+
+                <div class="bmi-number" id="adultBMI">
+                    0
+                </div>
+
+                <div class="category" id="adultCategory">
+                    Normal
+                </div>
+
+
+                <div class="scale">
+
+                    <div class="scale-bar"></div>
+
+                    <div class="scale-labels">
+                        <span>Underweight</span>
+                        <span>Normal</span>
+                        <span>Overweight</span>
+                        <span>Obese</span>
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <strong>BMI Categories</strong>
+
+                    <br>
+
+                    Underweight: Below 18.5
+
+                    <br>
+
+                    Normal weight: 18.5 – 24.9
+
+                    <br>
+
+                    Overweight: 25 – 29.9
+
+                    <br>
+
+                    Obesity: 30 or above
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CHILD SECTION ================= -->
+
+        <section id="child" class="section">
+
+            <div class="section-title">
+
+                <h2>Child & Teen BMI Calculator</h2>
+
+                <p>
+                    For children and teenagers aged 2–19 years
+                </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="childAge">
+                    Age
+                </label>
+
+                <input type="number" id="childAge" placeholder="Enter age in years" min="2" max="19" step="1">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="childSex">
+                    Sex
+                </label>
+
+                <select id="childSex">
+
+                    <option value="">
+                        Select sex
+                    </option>
+
+                    <option value="male">
+                        Male
+                    </option>
+
+                    <option value="female">
+                        Female
+                    </option>
+
+                </select>
+
+                <p class="hint">
+                    BMI-for-age interpretation uses sex-specific growth charts.
+                </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="childHeight">
+                    Height
+                </label>
+
+                <input type="number" id="childHeight" placeholder="Enter height in cm" min="1" step="0.1">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="childWeight">
+                    Weight
+                </label>
+
+                <input type="number" id="childWeight" placeholder="Enter weight in kg" min="1" step="0.1">
+
+            </div>
+
+
+            <button class="calculate-btn" onclick="calculateChildBMI()">
+                Calculate Child BMI
+            </button>
+
+            <button class="reset-btn" onclick="resetChild()">
+                Reset
+            </button>
+
+
+            <p class="error" id="childError">
+                Please enter a valid age, sex, height and weight.
+            </p>
+
+
+            <div class="result" id="childResult">
+
+                <h3>Child BMI</h3>
+
+                <div class="bmi-number" id="childBMI">
+                    0
+                </div>
+
+
+                <div class="info-box">
+
+                    <strong>Important:</strong>
+
+                    <br><br>
+
+                    For children and teenagers, BMI is interpreted according to
+                    age and sex using BMI-for-age percentile growth charts.
+
+                    <br><br>
+
+                    The standard categories are:
+
+                    <br><br>
+
+                    • Underweight: Below 5th percentile
+
+                    <br>
+
+                    • Healthy weight: 5th to below 85th percentile
+
+                    <br>
+
+                    • Overweight: 85th to below 95th percentile
+
+                    <br>
+
+                    • Obesity: 95th percentile or above
+
+                    <br><br>
+
+                    A healthcare professional should interpret the child's
+                    percentile and growth pattern.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PREGNANCY SECTION ================= -->
+
+        <section id="pregnancy" class="section">
+
+            <div class="section-title">
+
+                <h2>Pregnancy Weight Gain Guide</h2>
+
+                <p>
+                    Based on pre-pregnancy BMI
+                </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pregHeight">
+                    Height Before Pregnancy
+                </label>
+
+                <input type="number" id="pregHeight" placeholder="Enter height in cm" min="1" step="0.1">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pregWeight">
+                    Pre-Pregnancy Weight
+                </label>
+
+                <input type="number" id="pregWeight" placeholder="Enter weight before pregnancy in kg" min="1"
+                    step="0.1">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pregWeeks">
+                    Current Pregnancy Week
+                </label>
+
+                <input type="number" id="pregWeeks" placeholder="Example: 20" min="1" max="42" step="1">
+
+            </div>
+
+
+            <button class="calculate-btn" onclick="calculatePregnancy()">
+                Calculate Pregnancy Guide
+            </button>
+
+            <button class="reset-btn" onclick="resetPregnancy()">
+                Reset
+            </button>
+
+
+            <p class="error" id="pregError">
+                Please enter valid height, weight and pregnancy week.
+            </p>
+
+
+            <div class="result pregnancy-result" id="pregResult">
+
+                <h3>Pre-Pregnancy BMI</h3>
+
+                <div class="bmi-number" id="pregBMI">
+                    0
+                </div>
+
+
+                <div class="category" id="pregCategory">
+                    Normal
+                </div>
+
+
+                <div class="pregnancy-card">
+
+                    <strong>
+                        Recommended Total Weight Gain
+                    </strong>
+
+                    <div class="gain-range" id="gainRange">
+                        25 – 35 lb
+                    </div>
+
+                </div>
+
+
+                <div class="pregnancy-card">
+
+                    <strong>
+                        Pregnancy Week
+                    </strong>
+
+                    <p id="pregWeekText">
+                        Week 20
+                    </p>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    These ranges are general recommendations based on
+                    pre-pregnancy BMI. Individual recommendations can differ,
+                    especially with twins or other pregnancy circumstances.
+
+                    <br><br>
+
+                    Please discuss your personal weight-gain target with your
+                    obstetrician or other healthcare professional.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DISCLAIMER -->
+
+        <div class="disclaimer">
+
+            This calculator is for educational purposes only and is not a
+            substitute for professional medical advice.
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================================
+           TAB SWITCHING
+        ========================================= */
+
+        function showSection(sectionId, button) {
+
+            const sections = document.querySelectorAll(".section");
+
+            const tabs = document.querySelectorAll(".tab");
+
+
+            sections.forEach(function (section) {
+
+                section.classList.remove("active");
+
+            });
+
+
+            tabs.forEach(function (tab) {
+
+                tab.classList.remove("active");
+
+            });
+
+
+            document.getElementById(sectionId)
+                .classList.add("active");
+
+
+            button.classList.add("active");
+
+        }
+
+
+        /* =========================================
+           ADULT BMI
+        ========================================= */
+
+        function calculateAdultBMI() {
+
+            const height = parseFloat(
+                document.getElementById("adultHeight").value
+            );
+
+            const weight = parseFloat(
+                document.getElementById("adultWeight").value
+            );
+
+
+            const error = document.getElementById("adultError");
+
+            const result = document.getElementById("adultResult");
+
+
+            if (
+                isNaN(height) ||
+                isNaN(weight) ||
+                height <= 0 ||
+                weight <= 0
+            ) {
+
+                error.style.display = "block";
+
+                result.classList.remove("show");
+
+                return;
+
+            }
+
+
+            error.style.display = "none";
+
+
+            const heightMeters = height / 100;
+
+            const bmi =
+                weight / (heightMeters * heightMeters);
+
+
+            document.getElementById("adultBMI")
+                .textContent = bmi.toFixed(1);
+
+
+            const category =
+                document.getElementById("adultCategory");
+
+
+            category.classList.remove(
+                "underweight",
+                "normal",
+                "overweight",
+                "obese"
+            );
+
+
+            if (bmi < 18.5) {
+
+                category.textContent = "Underweight";
+
+                category.classList.add("underweight");
+
+            }
+
+            else if (bmi < 25) {
+
+                category.textContent = "Normal Weight";
+
+                category.classList.add("normal");
+
+            }
+
+            else if (bmi < 30) {
+
+                category.textContent = "Overweight";
+
+                category.classList.add("overweight");
+
+            }
+
+            else {
+
+                category.textContent = "Obese";
+
+                category.classList.add("obese");
+
+            }
+
+
+            result.classList.add("show");
+
+        }
+
+
+        function resetAdult() {
+
+            document.getElementById("adultHeight").value = "";
+
+            document.getElementById("adultWeight").value = "";
+
+            document.getElementById("adultResult")
+                .classList.remove("show");
+
+            document.getElementById("adultError")
+                .style.display = "none";
+
+        }
+
+
+        /* =========================================
+           CHILD BMI
+        ========================================= */
+
+        function calculateChildBMI() {
+
+            const age =
+                parseInt(document.getElementById("childAge").value);
+
+            const sex =
+                document.getElementById("childSex").value;
+
+            const height =
+                parseFloat(document.getElementById("childHeight").value);
+
+            const weight =
+                parseFloat(document.getElementById("childWeight").value);
+
+
+            const error =
+                document.getElementById("childError");
+
+            const result =
+                document.getElementById("childResult");
+
+
+            if (
+                isNaN(age) ||
+                !sex ||
+                isNaN(height) ||
+                isNaN(weight) ||
+                age < 2 ||
+                age > 19 ||
+                height <= 0 ||
+                weight <= 0
+            ) {
+
+                error.style.display = "block";
+
+                result.classList.remove("show");
+
+                return;
+
+            }
+
+
+            error.style.display = "none";
+
+
+            const heightMeters = height / 100;
+
+            const bmi =
+                weight / (heightMeters * heightMeters);
+
+
+            document.getElementById("childBMI")
+                .textContent = bmi.toFixed(1);
+
+
+            result.classList.add("show");
+
+        }
+
+
+        function resetChild() {
+
+            document.getElementById("childAge").value = "";
+
+            document.getElementById("childSex").value = "";
+
+            document.getElementById("childHeight").value = "";
+
+            document.getElementById("childWeight").value = "";
+
+            document.getElementById("childResult")
+                .classList.remove("show");
+
+            document.getElementById("childError")
+                .style.display = "none";
+
+        }
+
+
+        /* =========================================
+           PREGNANCY CALCULATOR
+        ========================================= */
+
+        function calculatePregnancy() {
+
+            const height =
+                parseFloat(document.getElementById("pregHeight").value);
+
+            const weight =
+                parseFloat(document.getElementById("pregWeight").value);
+
+            const weeks =
+                parseInt(document.getElementById("pregWeeks").value);
+
+
+            const error =
+                document.getElementById("pregError");
+
+            const result =
+                document.getElementById("pregResult");
+
+
+            if (
+                isNaN(height) ||
+                isNaN(weight) ||
+                isNaN(weeks) ||
+                height <= 0 ||
+                weight <= 0 ||
+                weeks < 1 ||
+                weeks > 42
+            ) {
+
+                error.style.display = "block";
+
+                result.classList.remove("show");
+
+                return;
+
+            }
+
+
+            error.style.display = "none";
+
+
+            const heightMeters = height / 100;
+
+            const bmi =
+                weight / (heightMeters * heightMeters);
+
+
+            document.getElementById("pregBMI")
+                .textContent = bmi.toFixed(1);
+
+
+            const category =
+                document.getElementById("pregCategory");
+
+
+            category.classList.remove(
+                "underweight",
+                "normal",
+                "overweight",
+                "obese"
+            );
+
+
+            let range;
+
+
+            /*
+                Pregnancy weight-gain ranges:
+    
+                BMI < 18.5
+                28–40 lb
+    
+                BMI 18.5–24.9
+                25–35 lb
+    
+                BMI 25–29.9
+                15–25 lb
+    
+                BMI >= 30
+                11–20 lb
+            */
+
+
+            if (bmi < 18.5) {
+
+                category.textContent = "Underweight Before Pregnancy";
+
+                category.classList.add("underweight");
+
+                range = "28 – 40 lb (12.7 – 18.1 kg)";
+
+            }
+
+            else if (bmi < 25) {
+
+                category.textContent = "Normal Weight Before Pregnancy";
+
+                category.classList.add("normal");
+
+                range = "25 – 35 lb (11.3 – 15.9 kg)";
+
+            }
+
+            else if (bmi < 30) {
+
+                category.textContent = "Overweight Before Pregnancy";
+
+                category.classList.add("overweight");
+
+                range = "15 – 25 lb (6.8 – 11.3 kg)";
+
+            }
+
+            else {
+
+                category.textContent = "Obese Before Pregnancy";
+
+                category.classList.add("obese");
+
+                range = "11 – 20 lb (5.0 – 9.1 kg)";
+
+            }
+
+
+            document.getElementById("gainRange")
+                .textContent = range;
+
+
+            document.getElementById("pregWeekText")
+                .textContent =
+                "You entered pregnancy week " + weeks + ".";
+
+
+            result.classList.add("show");
+
+        }
+
+
+        function resetPregnancy() {
+
+            document.getElementById("pregHeight").value = "";
+
+            document.getElementById("pregWeight").value = "";
+
+            document.getElementById("pregWeeks").value = "";
+
+            document.getElementById("pregResult")
+                .classList.remove("show");
+
+            document.getElementById("pregError")
+                .style.display = "none";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
